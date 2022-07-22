@@ -104,6 +104,16 @@ const RootMutation = new GraphQLObjectType({
         return client.save();
       },
     },
+    deleteClient: {
+      type: ClientType,
+      description: "Delete a client",
+      args: {
+        id: { type: GraphQLNonNull(GraphQLID) },
+      },
+      resolve: (parent, args) => {
+        return Client.findByIdAndDelete(args.id);
+      }
+    }
   }),
 });
 
