@@ -1,4 +1,8 @@
 const { projects, clients } = require("../testData");
+// mongoose models
+const Project = require("../models/project");
+const Client = require("../models/client");
+
 const {
   GraphQLObjectType,
   GraphQLString,
@@ -31,7 +35,7 @@ const ProjectType = new GraphQLObjectType({
     client: {
       type: ClientType,
       resolve: (project) => {
-        return clients.find((client) => client.id === project.clientId);
+        return Client.findById(project.clientId);
       },
       // now you can call the fields available on the client type
     },
@@ -49,27 +53,27 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID },
       },
       resolve: (parent, args) => {
-        return clients.find((client) => client.id === args.id);
+        return Client.findById(args.id);
       },
     },
     allClients: {
       type: new GraphQLList(ClientType),
       description: "Fetches all clients",
       // we don't need to pass args here, because we don't need to filter the clients
-      resolve: () => clients,
+      resolve: () => Client.find(),
     },
     singleProject: {
       type: ProjectType,
       description: "Fetches for a single project, passing ID as args",
       args: { id: { type: GraphQLID } },
       resolve: (parent, args) => {
-        return projects.find((project) => project.id === args.id);
+        return Project.findById(args.id);
       },
     },
     allProjects: {
       type: new GraphQLList(ProjectType),
       description: "Fetches all projects",
-      resolve: () => projects,
+      resolve: () => Project.find(),
     },
   }),
 });
