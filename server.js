@@ -9,7 +9,7 @@ app.use(
   "/api",
   graphqlHTTP({
     schema: require("./schema/schema"),
-    graphiql: process.env.NODE_ENV === "development" ? true : false,
+    graphiql: process.env.NODE_ENV === "development",
   })
 );
 // app.use(
