@@ -5,6 +5,7 @@ const {
   GraphQLSchema,
   GraphQLList,
   GraphQLID,
+  GraphQLInt,
 } = require("graphql");
 
 const ClientType = new GraphQLObjectType({
@@ -15,6 +16,18 @@ const ClientType = new GraphQLObjectType({
     name: { type: GraphQLString },
     email: { type: GraphQLString },
     phone: { type: GraphQLString },
+  }),
+});
+
+const ProjectType = new GraphQLObjectType({
+  name: "Project",
+  description: "Project Type",
+  fields: () => ({
+    id: { type: GraphQLID },
+    name: { type: GraphQLString },
+    description: { type: GraphQLString },
+    status: { type: GraphQLString },
+    clientId: { type: GraphQLInt },
   }),
 });
 
@@ -37,6 +50,19 @@ const RootQuery = new GraphQLObjectType({
       description: "Fetches all clients",
       // we don't need to pass args here, because we don't need to filter the clients
       resolve: () => clients,
+    },
+    singleProject: {
+      type: ProjectType,
+      description: "Fetches for a single project, passing ID as args",
+      args: { id: { type: GraphQLID } },
+      resolve: (parent, args) => {
+        return projects.find((project) => project.id === args.id);
+      },
+    },
+    allProjects: {
+      type: new GraphQLList(ProjectType),
+      description: "Fetches all projects",
+      resolve: () => projects,
     },
   }),
 });
