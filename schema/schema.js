@@ -145,6 +145,16 @@ const RootMutation = new GraphQLObjectType({
         return project.save();
       },
     },
+    deleteProject: {
+      type: ProjectType,
+      description: "Delete a project",
+      args: {
+        id: { type: GraphQLNonNull(GraphQLID) },
+      },
+      resolve: (parent, args) => {
+        return Project.findByIdAndDelete(args.id);
+      },
+    },
   }),
 });
 
