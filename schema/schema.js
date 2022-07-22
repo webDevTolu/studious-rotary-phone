@@ -1,4 +1,4 @@
-const { projects, clients } = require("../testData");
+// const { projects, clients } = require("../testData");
 // mongoose models
 const Project = require("../models/project");
 const Client = require("../models/client");
@@ -10,8 +10,10 @@ const {
   GraphQLList,
   GraphQLID,
   GraphQLInt,
+  GraphQLNonNull,
 } = require("graphql");
 
+// QUERIES
 const ClientType = new GraphQLObjectType({
   name: "Client",
   description: "Client Type",
@@ -78,6 +80,34 @@ const RootQuery = new GraphQLObjectType({
   }),
 });
 
+// MUTATIONS
+const RootMutation = new GraphQLObjectType({
+  name: "RootMutationType",
+  description: "List of all Mutations",
+  fields: () => ({
+    addClient: {
+      type: ClientType,
+      description: "Add a new client",
+      args: {
+        name: { type: GraphQLNonNull(GraphQLString) },
+        email: { type: GraphQLNonNull(GraphQLString) },
+        phone: { type: GraphQLNonNull(GraphQLString) },
+      },
+      resolve: (parent, args) => {
+        // attributes the fields to the Client Schema object
+        const client = new Client({
+          name: args.name,
+          email: args.email,
+          phone: args.phone,
+        });
+        // saves the client to the database
+        return client.save();
+      },
+    },
+  }),
+});
+
 module.exports = new GraphQLSchema({
   query: RootQuery,
+  mutation: RootMutation,
 });
