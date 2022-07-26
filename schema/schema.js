@@ -112,6 +112,12 @@ const RootMutation = new GraphQLObjectType({
         id: { type: GraphQLNonNull(GraphQLID) },
       },
       resolve: (parent, args) => {
+        // cascade delete to delete all projects associated with the client
+        Project.find({ clientId: args.id }).then((projects) => {
+          projects.forEach((project) => {
+            project.remove();
+          });
+        });
         return Client.findByIdAndDelete(args.id);
       },
     },
